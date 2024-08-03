@@ -38,4 +38,16 @@
     /* 这里改变跟随的底色 */
     background: rgb(57, 197, 187);
   }
-    
+  body {
+
+    background:url(/images/background.jpg);
+
+    background-repeat: no-repeat;
+
+    background-attachment:fixed; /*不重复*/
+
+    background-size: cover;      /*填充*/
+
+    background-position:50% 50%;
+
+}

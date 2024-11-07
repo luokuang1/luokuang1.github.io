@@ -28,7 +28,7 @@
 <meta property="og:description" content="相关的文章为：https:&#x2F;&#x2F;blog.csdn.net&#x2F;solitudi&#x2F;article&#x2F;details&#x2F;116666720 .htaccess配置文件的基本信息首先先了解一下有关.htaccess文件是什么，是一个配置文件，用于运行Apache网络服务器软件的网络服务器上，当.htaccess文件被放置在一个 “通过Apache Web服务器加载 “的目录中时，.htaccess文件会被Apa">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-07-23T13:40:19.000Z">
-<meta property="article:modified_time" content="2024-08-03T04:43:43.716Z">
+<meta property="article:modified_time" content="2024-10-14T11:58:02.117Z">
 <meta property="article:author" content="luokuang">
 <meta property="article:tag" content="ctf htaccess">
 <meta name="twitter:card" content="summary">
@@ -130,7 +130,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -204,7 +204,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-08-03 12:43:43" itemprop="dateModified" datetime="2024-08-03T12:43:43+08:00">2024-08-03</time>
+      <time title="Modified: 2024-10-14 19:58:02" itemprop="dateModified" datetime="2024-10-14T19:58:02+08:00">2024-10-14</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -237,9 +237,9 @@
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;If <span class="string">&quot;file(&#x27;/flag&#x27;) =~ &#x27;/flag&#123;a/&#x27;&quot;</span>&gt;  <span class="comment">//~ 类似为正则匹对</span></span><br><span class="line">ErrorDocument <span class="number">404</span> <span class="string">&quot;y4tacker&quot;</span></span><br><span class="line">&lt;/If&gt;</span><br></pre></td></tr></table></figure>
 </blockquote>
 <p>如果在/flag中有flag{a 就返回y4tacker，从而来枚举出flag,比较少用</p>
-<h4 id="SetHandler和ForceType"><a href="#SetHandler和ForceType" class="headerlink" title="SetHandler和ForceType"></a>SetHandler和ForceType</h4><p>常见的应用场景 文件上传：</p>
+<h4 id="SetHandler和ForceType"><a href="#SetHandler和ForceType" class="headerlink" title="SetHandler和ForceType"></a>SetHandler和ForceType</h4><p>常见的应用场景 文件上传，这里要严格按照缩进，可能会出现错误：</p>
 <blockquote>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;FilesMatch <span class="string">&quot;1.jpg&quot;</span>&gt;   <span class="comment">//指定将1.jpg通过PHP运行</span></span><br><span class="line">SetHandler application/x-httpd-php  </span><br><span class="line">&lt;/FilesMatch&gt;</span><br><span class="line"><span class="comment">//或者直接全局都直接使用PHP解析</span></span><br><span class="line">SetHandler application/x-httpd-php</span><br><span class="line"></span><br><span class="line">&lt;Files ~ <span class="string">&quot;\.jpg$&quot;</span>&gt;   <span class="comment">//~先当于正则匹对 将所有匹对到.jpg结尾的都以PHP解析</span></span><br><span class="line"> ForceType application/x-httpd-php  </span><br><span class="line">&lt;/Files&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;FilesMatch <span class="string">&quot;aaa.jpg&quot;</span>&gt;</span><br><span class="line">  SetHandler application/x-httpd-php</span><br><span class="line">&lt;/FilesMatch&gt;</span><br><span class="line"><span class="comment">//指定将1.jpg通过PHP运行</span></span><br><span class="line"><span class="comment">//或者直接全局都直接使用PHP解析</span></span><br><span class="line">SetHandler application/x-httpd-php</span><br><span class="line"></span><br><span class="line">&lt;Files ~ <span class="string">&quot;\.jpg$&quot;</span>&gt;   <span class="comment">//~先当于正则匹对 将所有匹对到.jpg结尾的都以PHP解析</span></span><br><span class="line">ForceType application/x-httpd-php  </span><br><span class="line">&lt;/Files&gt;</span><br></pre></td></tr></table></figure>
 </blockquote>
 <h4 id="AddHandler"><a href="#AddHandler" class="headerlink" title="AddHandler"></a>AddHandler</h4><p>作用就是将什么以什么方式解析，作用域是针对整个服务器或特定目录的，而不是针对单个文件的，所以不需要通过Files来进行规定</p>
 <blockquote>

